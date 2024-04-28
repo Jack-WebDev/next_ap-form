@@ -160,15 +160,15 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 					{value?.map(({ file, progress }, i) => (
 						<div
 							key={i}
-							className="flex h-16 w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-2"
+							className="flex h-16 w-96 max-w-[100vw] bg-white flex-col justify-center rounded border border-gray-300 px-4 py-2"
 						>
-							<div className="flex items-center gap-2 text-gray-500 dark:text-white">
+							<div className="flex items-center gap-2 text-black dark:text-white">
 								<FileIcon size="30" className="shrink-0" />
 								<div className="min-w-0 text-sm">
 									<div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
 										{file.name}
 									</div>
-									<div className="text-xs text-gray-400 dark:text-gray-400">
+									<div className="text-xs text-gray-800 dark:text-gray-400">
 										{formatFileSize(file.size)}
 									</div>
 								</div>
