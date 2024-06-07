@@ -23,6 +23,8 @@ export async function POST(req: NextRequest) {
 			path,
 		} = await res;
 
+		// console.log(firstName, lastName, email, password, role, department, jobTitle, contactNumber, address, city, province, postalCode, country, dateOfBirth)
+
 		const formData = await db.aPForm.create({
 			data: {
 				propertyID: propertyID,
