@@ -22,7 +22,7 @@ model APForm {
   propertyID               String?
   propertyName             String?
   propertyAddress          String?
-  changeType               String?
+  changeType               String[]
   changeDescriptionDetails String?
   reasonForChange          String?
   desiredOutcome           String?

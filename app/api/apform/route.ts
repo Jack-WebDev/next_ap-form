@@ -16,14 +16,11 @@ export async function POST(req: NextRequest) {
 			requestorName,
 			requestorJobTitle,
 			date,
-			priority,
 			filename,
 			mimetype,
 			size,
 			path,
 		} = await res;
-
-		// console.log(firstName, lastName, email, password, role, department, jobTitle, contactNumber, address, city, province, postalCode, country, dateOfBirth)
 
 		const formData = await db.aPForm.create({
 			data: {
@@ -35,12 +32,12 @@ export async function POST(req: NextRequest) {
 				requestorJobTitle: requestorJobTitle,
 				changeDescriptionDetails: changeDescriptionDetails,
 				desiredOutcome: desiredOutcome,
-				changeType: changeType[0],
-				priority: priority[0],
+				changeType: changeType,
 				date: date,
 				reasonForChange: reasonForChange,
 			},
 		});
+
 
 		const APForm_id = formData.id;
 		await db.uploads.create({
@@ -52,6 +49,8 @@ export async function POST(req: NextRequest) {
 				nsfas_form_id: APForm_id,
 			},
 		});
+
+		console.log(formData)
 
 		return NextResponse.json(formData, { status: 201 });
 	} catch (error) {

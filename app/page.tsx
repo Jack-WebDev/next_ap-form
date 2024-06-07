@@ -57,21 +57,6 @@ const changeType = [
   },
 ] as const;
 
-const priority = [
-  {
-    id: "Urgent",
-    label: "Urgent",
-  },
-  {
-    id: "Routine",
-    label: "Routine",
-  },
-  {
-    id: "Critical",
-    label: "Critical",
-  },
-] as const;
-
 const formSchema = z.object({
   propertyID: z.string().regex(/^\d{8}-\d{4}-.*$/, {
     message: "Invalid Property ID format.",
@@ -87,9 +72,7 @@ const formSchema = z.object({
     .refine((value) => value.some((item) => item), {
       message: "You have to select one item.",
     }),
-  priority: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select one item.",
-  }),
+
   changeDescriptionDetails: z.string().min(5, {
     message: "Change Description Details must have at least 5 characters",
   }),
@@ -123,12 +106,12 @@ export default function MultiFileDropzoneUsage() {
       propertyAddress: "",
       changeDescriptionDetails: "",
       desiredOutcome: "",
+      reasonForRequiredChange: "",
       requestorName: "",
       requestorID: "",
       requestorJobTitle: "",
 
       changeType: [],
-      priority: [],
     },
   });
   const [img_url, setUrl] = useState("");
@@ -149,7 +132,6 @@ export default function MultiFileDropzoneUsage() {
       requestorName: values.requestorName,
       requestorJobTitle: values.requestorJobTitle,
       date: values.date,
-      priority: values.priority,
       changeType: values.changeType,
       filename: fileData.name,
       mimetype: fileData.type,
@@ -180,255 +162,263 @@ export default function MultiFileDropzoneUsage() {
 
   return (
     <>
-      <h1 className="mt-8 text-4xl">Change Request Form</h1>
+      <h1 className="mt-8 text-4xl text-center">Change Request Form</h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button variant={"outline"} className="rounded-xl">
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <FaCalendar className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date: Date) => date < new Date()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="propertyID"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Property ID</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your property ID"
-                    {...field}
-                    className="rounded-xl"
-                  />
-                </FormControl>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="propertyName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Property Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your property Name"
-                    {...field}
-                    className="rounded-xl"
-                  />
-                </FormControl>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="propertyAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Property Address</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter property address"
-                    {...field}
-                    className="rounded-xl"
-                  />
-                </FormControl>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="requestorID"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Requestor&apos;s ID</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your ID"
-                    {...field}
-                    className="rounded-xl"
-                  />
-                </FormControl>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="requestorName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Requestor&apos;s Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your name"
-                    {...field}
-                    className="rounded-xl"
-                  />
-                </FormControl>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requestorJobTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Requestor&apos;s Job Title(Role at the Property)
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your Job Title"
-                    {...field}
-                    className="rounded-xl"
-                  />
-                </FormControl>
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="changeType"
-            render={() => (
-              <FormItem>
-                <div className="mb-4">
-                  <FormLabel className="text-base">
-                    Tick the Change Type Required:
-                  </FormLabel>
-                </div>
-                {changeType.map((item) => (
-                  <FormField
-                    key={item.id}
-                    control={form.control}
-                    name="changeType"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={item.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="max-w-3xl mx-auto p-4 rounded-lg"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
                         >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(item.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([...field.value, item.id])
-                                  : field.onChange(
-                                      field.value?.filter(
-                                        (value) => value !== item.id
-                                      )
-                                    );
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="text-sm font-normal">
-                            {item.label}
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <FaCalendar className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date: Date) => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
 
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="changeDescriptionDetails"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Change Description Details</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe the changes required"
-                    className="resize-none rounded-xl"
-                    {...field}
-                  />
-                </FormControl>
+            <FormField
+              control={form.control}
+              name="propertyID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property ID</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your property ID"
+                      {...field}
+                      className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                    />
+                  </FormControl>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="propertyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your property Name"
+                      {...field}
+                      className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                    />
+                  </FormControl>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
 
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="reasonForRequiredChange"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Reason For Required Change</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe the reason for the change"
-                    className="resize-none rounded-xl"
-                    {...field}
-                  />
-                </FormControl>
+            <FormField
+              control={form.control}
+              name="propertyAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter property address"
+                      {...field}
+                      className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                    />
+                  </FormControl>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="requestorID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Requestor&apos;s ID</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your ID"
+                      {...field}
+                      className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                    />
+                  </FormControl>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="requestorName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Requestor&apos;s Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your name"
+                      {...field}
+                      className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                    />
+                  </FormControl>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
 
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="desiredOutcome"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Desired Outcome of Change(by Property Owner or Requestor
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe your desired outcome"
-                    className="resize-none rounded-xl"
-                    {...field}
-                  />
-                </FormControl>
+            <FormField
+              control={form.control}
+              name="requestorJobTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Requestor&apos;s Job Title(Role at the Property)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your Job Title"
+                      {...field}
+                      className="mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                    />
+                  </FormControl>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="changeType"
+              render={() => (
+                <FormItem>
+                  <div className="mb-4">
+                    <FormLabel className="text-base">
+                      Tick the Change Type Required:
+                    </FormLabel>
+                  </div>
+                  {changeType.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="changeType"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              {item.label}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
 
-                <FormMessage style= {{color: "black"}} />
-              </FormItem>
-            )}
-          />
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="changeDescriptionDetails"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Change Description Details</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe the changes required"
+                      className="resize-none rounded-xl"
+                      {...field}
+                    />
+                  </FormControl>
 
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="reasonForRequiredChange"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Reason For Required Change</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe the reason for the change"
+                      className="resize-none mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                      {...field}
+                    />
+                  </FormControl>
 
-          <h1>
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="desiredOutcome"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Desired Outcome of Change(by Property Owner or Requestor)
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe your desired outcome"
+                      className="resize-none mt-1 p-2 w-full border rounded-xl bg-white text-black"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage style={{ color: "black" }} />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <h1 className="my-12">
             NOTE: For Property Ownership attach certified copy of new title
             deed, previous property owner written confirmation for reason of
             ownership change or the confirmation letter from property transfer
