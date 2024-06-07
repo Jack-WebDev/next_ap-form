@@ -369,7 +369,7 @@ export default function MultiFileDropzoneUsage() {
                   <FormControl>
                     <Textarea
                       placeholder="Describe the changes required"
-                      className="resize-none rounded-xl"
+                      className="resize-none mt-1 p-2 w-full border rounded-xl bg-white text-black"
                       {...field}
                     />
                   </FormControl>
