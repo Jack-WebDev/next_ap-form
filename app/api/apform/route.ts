@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/database/connection";
 
+export const revalidate = 0;
+
 export async function POST(req: NextRequest) {
 	try {
 		const res = await req.json();
@@ -49,8 +51,6 @@ export async function POST(req: NextRequest) {
 				nsfas_form_id: APForm_id,
 			},
 		});
-
-		console.log(formData)
 
 		return NextResponse.json(formData, { status: 201 });
 	} catch (error) {

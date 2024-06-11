@@ -13,7 +13,7 @@ model Uploads {
   path          String?
   mimetype      String?
   size          Int?
-  nsfasForm     APForm?  @relation(fields: [nsfas_form_id], references: [id])
+  nsfasForm     APForm?  @relation(fields: [nsfas_form_id], references: [id], onDelete: Cascade)
   nsfas_form_id String?  @db.Uuid
   createdAt     DateTime @default(now()) @db.Timestamp
 }
