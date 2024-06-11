@@ -114,11 +114,11 @@ export default function MultiFileDropzoneUsage() {
       changeType: [],
     },
   });
-  const [img_url, setUrl] = useState("");
+  const [img_url, setUrl] = useState<string[]>([]);
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const fileData = fileStates[0].file;
+    const fileData = fileStates.map((fileState) => fileState.file);
     const filePath = img_url;
 
     const res = await axios.post("api/apform", {
@@ -133,9 +133,9 @@ export default function MultiFileDropzoneUsage() {
       requestorJobTitle: values.requestorJobTitle,
       date: values.date,
       changeType: values.changeType,
-      filename: fileData.name,
-      mimetype: fileData.type,
-      size: fileData.size,
+      filename: fileData.map((file) => file.name),
+      mimetype: fileData.map((file) => file.type),
+      size: fileData.map((file) => file.size),
       path: filePath,
     });
 
@@ -466,7 +466,7 @@ export default function MultiFileDropzoneUsage() {
                       }
                     },
                   });
-                  setUrl(res.url);
+                  setUrl((urls) => [...urls, res.url]);
                   console.log(res);
                 } catch (err) {
                   updateFileProgress(addedFileState.key, "ERROR");
