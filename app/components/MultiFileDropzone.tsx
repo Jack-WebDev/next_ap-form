@@ -24,6 +24,7 @@ export type FileState = {
 	file: File;
 	key: string; // used to identify the file in the progress callback
 	progress: "PENDING" | "COMPLETE" | "ERROR" | number;
+	
 };
 
 type InputProps = {
@@ -141,7 +142,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 								className: dropZoneClassName,
 							})}
 						>
-							<input ref={ref} {...getInputProps()} required />
+							<input ref={ref} {...getInputProps()} name="file" />
 							<div className="flex flex-col items-center justify-center text-xs text-black">
 								<UploadCloudIcon className="mb-1 h-7 w-7" />
 								<div className="text-black font-semibold">

@@ -8,19 +8,18 @@ datasource db {
 }
 
 model Uploads {
-  id            String   @id @default(uuid()) @db.Uuid
+  id            String   @id @default(uuid()) 
   filename      String[]
   path          String[]
   mimetype      String[]
   size          Int[]
   nsfasForm     APForm?  @relation(fields: [nsfas_form_id], references: [id], onDelete: Cascade)
-  nsfas_form_id String?  @db.Uuid
-  createdAt     DateTime @default(now()) @db.Timestamp
+  nsfas_form_id String?  
+  createdAt     DateTime @default(now()) 
 }
 
 model APForm {
-  id                       String    @id @default(uuid()) @db.Uuid
-  propertyID               String?
+  id                       String    @id @default(uuid()) 
   propertyName             String?
   propertyAddress          String?
   changeType               String[]
@@ -28,9 +27,9 @@ model APForm {
   reasonForChange          String?
   desiredOutcome           String?
   requestorName            String?
-  requestorID              String?
+  requestorSurname      String?
+  IDNumber              String?
   requestorJobTitle        String?
-  date                     DateTime?
-  createdAt                DateTime  @default(now()) @db.Timestamp
+  createdAt                DateTime  @default(now())
   Uploads                  Uploads[]
 }
