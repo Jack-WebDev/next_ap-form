@@ -11,14 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
-import { format } from "date-fns";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { FaCalendar } from "react-icons/fa";
+
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -33,9 +26,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { request } from "http";
-
+import Loading from "./loading";
+import { toast } from "react-toastify";
 const changeType = [
   {
     id: "Bank Details Change",
@@ -114,36 +106,59 @@ export default function MultiFileDropzoneUsage() {
     },
   });
   const [img_url, setUrl] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
+  const { edgestore } = useEdgeStore();
   const router = useRouter();
+
+  const validateUploads = () => {
+    let isValid = true;
+
+    if (fileStates.length === 0) {
+      toast.error("Please attach the required documentation");
+      isValid = false;
+    }
+
+    return isValid;
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const fileData = fileStates.map((fileState) => fileState.file);
     const filePath = img_url;
 
-    const res = await axios.post("api/apform", {
-      propertyName: values.propertyName,
-      propertyAddress: values.propertyAddress,
-      changeDescriptionDetails: values.changeDescriptionDetails,
-      reasonForChange: values.reasonForRequiredChange,
-      desiredOutcome: values.desiredOutcome,
-      requestorID: values.requestorID,
-      requestorName: values.requestorName,
-      requestorSurname: values.requestorSurname,
-      requestorJobTitle: values.requestorJobTitle,
-      changeType: values.changeType,
-      filename: fileData.map((file) => file.name),
-      mimetype: fileData.map((file) => file.type),
-      size: fileData.map((file) => file.size),
-      path: filePath,
-    });
+    if(!validateUploads()) return;
 
-    if (res.status === 201) {
-      router.push("/success");
+    try {
+      setLoading(true);
+      const res = await axios.post("api/apform", {
+        propertyName: values.propertyName,
+        propertyAddress: values.propertyAddress,
+        changeDescriptionDetails: values.changeDescriptionDetails,
+        reasonForChange: values.reasonForRequiredChange,
+        desiredOutcome: values.desiredOutcome,
+        requestorID: values.requestorID,
+        requestorName: values.requestorName,
+        requestorSurname: values.requestorSurname,
+        requestorJobTitle: values.requestorJobTitle,
+        changeType: values.changeType,
+        filename: fileData.map((file) => file.name),
+        mimetype: fileData.map((file) => file.type),
+        size: fileData.map((file) => file.size),
+        path: filePath,
+      });
+
+      if (res.status === 201) {
+        setLoading(false);
+        router.push("/success");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
-  const [fileStates, setFileStates] = useState<FileState[]>([]);
-  const { edgestore } = useEdgeStore();
+
 
   function updateFileProgress(key: string, progress: FileState["progress"]) {
     setFileStates((fileStates) => {
@@ -160,6 +175,7 @@ export default function MultiFileDropzoneUsage() {
 
   return (
     <div>
+      {loading && <Loading />}
       <Form {...form}>
         <div className="mx-8 mt-8 bg-white rounded-xl py-4 md:mx-auto">
           <h1 className="mt-8 text-2xl font-medium text-center text-black">
@@ -263,9 +279,7 @@ export default function MultiFileDropzoneUsage() {
                 name="requestorJobTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Job Title (Role at the Property)
-                    </FormLabel>
+                    <FormLabel>Job Title (Role at the Property)</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter your Job Title"
@@ -387,23 +401,31 @@ export default function MultiFileDropzoneUsage() {
             </div>
 
             <h1 className="my-12 text-black">
-              NOTE: <span className="font-semibold">For Property Ownership</span> attach certified copy of new title
-              deed, previous property owner written confirmation for reason of
-              ownership change or the confirmation letter from property transfer
-              attorney, and <span className="font-semibold">for bank changes</span>, attach bank confirmation letter,
-              title deed with holder name matching the account name and/or
-              property owner confirmation (affidavit) of reason why account name
-              is different. <span className="font-semibold">User system account name change</span>, property owner’s
-              confirmation (affidavit) of change. <span className="font-semibold">If property name is the same
-              as bank account name then provide CIPC docs as proof of
-              directorship/shareholder status of the property and shareholder’s/
-              director’s consent letter as confirmation for account name.</span>
+              NOTE:{" "}
+              <span className="font-semibold">For Property Ownership</span>{" "}
+              attach certified copy of new title deed, previous property owner
+              written confirmation for reason of ownership change or the
+              confirmation letter from property transfer attorney, and{" "}
+              <span className="font-semibold">for bank changes</span>, attach
+              bank confirmation letter, title deed with holder name matching the
+              account name and/or property owner confirmation (affidavit) of
+              reason why account name is different.{" "}
+              <span className="font-semibold">
+                User system account name change
+              </span>
+              , property owner’s confirmation (affidavit) of change.{" "}
+              <span className="font-semibold">
+                If property name is the same as bank account name then provide
+                CIPC docs as proof of directorship/shareholder status of the
+                property and shareholder’s/ director’s consent letter as
+                confirmation for account name.
+              </span>
             </h1>
 
             <div className="mb-[5rem]">
               <MultiFileDropzone
                 className="bg-white w-full"
-                name="file"
+                name="files"
                 value={fileStates}
                 onChange={(files) => {
                   setFileStates(files);
