@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
   try {
     const res = await req.json();
     const {
-      propertyID,
       propertyName,
       propertyAddress,
       changeType,
@@ -16,8 +15,8 @@ export async function POST(req: NextRequest) {
       desiredOutcome,
       requestorID,
       requestorName,
+      requestorSurname,
       requestorJobTitle,
-      date,
       filename,
       mimetype,
       size,
@@ -26,16 +25,15 @@ export async function POST(req: NextRequest) {
 
     const formData = await db.aPForm.create({
       data: {
-        propertyID: propertyID,
         propertyName: propertyName,
         propertyAddress: propertyAddress,
-        requestorID: requestorID,
+        IDNumber: requestorID,
         requestorName: requestorName,
+        requestorSurname: requestorSurname,
         requestorJobTitle: requestorJobTitle,
         changeDescriptionDetails: changeDescriptionDetails,
         desiredOutcome: desiredOutcome,
         changeType: changeType,
-        date: date,
         reasonForChange: reasonForChange,
       },
     });

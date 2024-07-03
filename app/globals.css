@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-	background: #fd591d;
-	background: linear-gradient(
-		274deg,
-		rgba(253, 89, 29, 1) 50%,
-		rgba(252, 167, 69, 1) 100%
-	);
-	color: #fff;
-}
 
 form {
 	margin: 2rem;
