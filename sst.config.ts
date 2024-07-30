@@ -10,9 +10,10 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const edgeStoreSecret = new Config.Secret(stack, "edgeStoreSecret");
+      const EDGE_STORE_ACCESS_KEY = new Config.Secret(stack, "EDGE_STORE_ACCESS_KEY");
+      const TEST_VAL = new Config.Secret(stack, "TEST_VAL");
       const site = new NextjsSite(stack, "site", {
-        bind: [edgeStoreSecret]
+        bind: [EDGE_STORE_ACCESS_KEY, TEST_VAL]
       });
 
       stack.addOutputs({
