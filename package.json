@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "sst bind next dev",
     "build": " next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "deploy": "AWS_PROFILE=production sst deploy --stage production"
   },
   "dependencies": {
     "@edgestore/react": "^0.1.6",
@@ -46,6 +47,9 @@
     "prisma": "^5.13.0",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "sst": "^2.43.4",
+    "aws-cdk-lib": "2.142.1",
+    "constructs": "10.3.0"
   }
 }

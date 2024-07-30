@@ -403,8 +403,8 @@ export default function MultiFileDropzoneUsage() {
             <h1 className="my-12 text-black">
               NOTE:{" "}
               <span className="font-semibold">For Property Ownership</span>{" "}
-              attach certified copy of new title deed, previous property owner
-              written confirmation for reason of ownership change or the
+              attach certified copy of new title deed, or  previous property owner
+              written affidavit confirmation for reason of ownership change and confirm that propety ownership was perfomed withput any chnagt of any previsloiry inspexte propety diytens  or the
               confirmation letter from property transfer attorney, and{" "}
               <span className="font-semibold">for bank changes</span>, attach
               bank confirmation letter, title deed with holder name matching the
